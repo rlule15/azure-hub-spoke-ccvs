@@ -52,7 +52,7 @@ COPY --from=builder /app /app
 ENV PATH="/app/.venv/bin:$PATH"
 
 # Switch to the unprivileged user
-USER appuser
+USER 1001
 
 # Expose port 8000 for the FastAPI application
 EXPOSE 8000
