@@ -19,6 +19,13 @@ jobs:
         with:
           dockerfile: "Dockerfile"
 
+      - name: Run Trivy to scan Dockerfile for vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          scan-type: "config"
+          severity: "CRITICAL,HIGH,MEDIUM"
+          scan-ref: "Dockerfile"
+
       - name: Login to Github Container Registry
         uses: docker/login-action@v4
         with:
