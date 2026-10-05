@@ -28,7 +28,7 @@ jobs:
           scan-type: "config"
           severity: "CRITICAL,HIGH,MEDIUM"
           scan-ref: "Dockerfile"
-          format: "table"
+          format: "sarif"
           output: "trivy-results.sarif"
 
       - name: Upload Trivy scan results
