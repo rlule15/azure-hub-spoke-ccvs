@@ -9,7 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: development
-
+    permissions:
+      contents: read # to clone the repo
+      packages: write # to push to GHCR
+      security-events: write # to upload security scan results
     steps:
       - name: Checkout repo
         uses: actions/checkout@v7
