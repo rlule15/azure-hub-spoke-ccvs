@@ -35,6 +35,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set the working directory to /app
 WORKDIR /app
 
+# Create an unprivileged user and switch to that user
+RUN groupadd -g 1001 appgroup && \
+    useradd -u 1001 -g appgroup -s /sbin/nologin -M --no-log-init appuser
+
+# Create data folder for the SQLite database
+RUN mkdir -p /app/data && chown -R appuser:appgroup /app/data
+
 # Copy the virtual environment from the builder stage to the runtime stage
 COPY --from=builder /app/.venv /app/.venv
 
@@ -43,6 +50,9 @@ COPY --from=builder /app /app
 
 # Set the PATH environment variable to include the virtual environment's bin directory
 ENV PATH="/app/.venv/bin:$PATH"
+
+# Switch to the unprivileged user
+USER appuser
 
 # Expose port 8000 for the FastAPI application
 EXPOSE 8000
