@@ -62,12 +62,12 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/${{ github.repository }}/ccvs:${{ vars.IMAGE_VERSION }}
+          images: ghcr.io/${{ github.repository }}:${{ vars.IMAGE_VERSION }}
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v7.4.0
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/ccvs:${{ vars.IMAGE_VERSION }}
+          tags: ghcr.io/${{ github.repository }}:${{ vars.IMAGE_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
