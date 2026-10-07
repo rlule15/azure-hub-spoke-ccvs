@@ -58,9 +58,16 @@ jobs:
       - name: Run Docker Build Checks
         run: docker build --check .
 
+      - name: Get Docker Image Metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}/ccvs:${{ vars.IMAGE_VERSION }}
+
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v7.4.0
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository }}/ccvs:1.0.0
+          tags: ghcr.io/${{ github.repository }}/ccvs:${{ vars.IMAGE_VERSION }}
+          labels: ${{ steps.meta.outputs.labels }}
