@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: Container CI Workflow
 
 # What will trigger this workflow
 on:
