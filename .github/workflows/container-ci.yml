@@ -2,7 +2,13 @@ name: CI/CD Workflow
 
 # What will trigger this workflow
 on:
-  - workflow_dispatch
+  push:
+    branches: [main]
+    paths:
+      - "Dockerfile"
+      - ".dockerignore"
+      - "app/**"
+  workflow_dispatch:
 
 # Steps to run in this workflow
 jobs:
