@@ -37,7 +37,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set the working directory to /app
 WORKDIR /app
 
-# Create an unprivileged user and switch to that user
+# Create an unprivileged user
 RUN groupadd -g 1001 appgroup && \
     useradd -u 1001 -g appgroup -s /sbin/nologin -M --no-log-init appuser
 
