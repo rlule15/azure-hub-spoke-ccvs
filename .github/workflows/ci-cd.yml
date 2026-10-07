@@ -55,3 +55,10 @@ jobs:
 
       - name: Run Docker Build Checks
         run: docker build --check .
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@7
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}/ccvs:1.0.0
