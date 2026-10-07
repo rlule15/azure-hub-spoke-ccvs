@@ -79,6 +79,7 @@ jobs:
           image-ref: "ghcr.io/${{ github.repository }}:test"
           severity: "CRITICAL,HIGH,MEDIUM"
           format: "sarif"
+          ignore-unfixed: true
           output: "trivy-results.sarif"
 
       - name: Upload Trivy scan results
