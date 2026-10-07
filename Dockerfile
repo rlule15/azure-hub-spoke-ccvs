@@ -56,5 +56,9 @@ USER 1001
 # Expose port 8000 for the FastAPI application
 EXPOSE 8000
 
+# Container health check
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD ["python", "-c", "import sys,urllib.request; sys.exit(0) if urllib.request.urlopen('http://127.0.0.1:8000/', timeout=3).status < 400 else sys.exit(1)"]
+
 # Set the command to run the FastAPI application using uvicorn
 CMD ["fastapi", "run"]
