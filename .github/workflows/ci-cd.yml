@@ -90,7 +90,7 @@ jobs:
 
       - name: Run Container & Verify Health
         run: |
-          apt-get update && apt-get install -y curl
+          sudo apt-get update && apt-get install -y curl
           docker run -d --name test-container ghcr.io/${{ github.repository }}:test
           sleep 5 # Wait for the container to start
           docker exec test-container curl -f http://localhost:8080/health
