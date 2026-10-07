@@ -41,14 +41,11 @@ WORKDIR /app
 RUN groupadd -g 1001 appgroup && \
     useradd -u 1001 -g appgroup -s /sbin/nologin -M --no-log-init appuser
 
-# Create data folder for the SQLite database
-RUN mkdir -p /app/data && chown -R appuser:appgroup /app/data
-
-# Copy the virtual environment from the builder stage to the runtime stage
-COPY --from=builder /app/.venv /app/.venv
-
 # Copy the application code from the builder stage to the runtime stage
-COPY --from=builder /app /app
+COPY --from=builder --chown=1001:1001 /app /app
+
+# Create data folder for the SQLite database
+RUN mkdir -p /app/data && chown -R 1001:1001 /app/data
 
 # Set the PATH environment variable to include the virtual environment's bin directory
 ENV PATH="/app/.venv/bin:$PATH"
