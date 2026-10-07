@@ -44,8 +44,7 @@ jobs:
         uses: github/codeql-action/upload-sarif@v4
         if: always() # Ensure that the upload step runs even if the scan fails
         with:
-          sarif_file: |
-            "trivy-results.sarif"
+          sarif_file: "trivy-results.sarif"
 
   build_and_test:
     name: Build, Scan, & Test Docker Image
