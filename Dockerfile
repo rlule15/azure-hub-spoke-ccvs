@@ -27,7 +27,9 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 FROM python:3.13-slim AS runtime
 
+
 # Install git for application use
+# hadolint ignore=DS0026 # We are installing git for application use, not for building the image
 RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     && rm -rf /var/lib/apt/lists/*
