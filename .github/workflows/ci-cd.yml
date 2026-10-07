@@ -49,6 +49,7 @@ jobs:
 
   build_and_test:
     name: Build, Scan, & Test Docker Image
+    needs: lint_and_scan
     runs-on: ubuntu-latest
     environment: development
     permissions:
@@ -97,6 +98,7 @@ jobs:
 
   push:
     name: Build, & push docker image to Github Container Registry
+    needs: [lint_and_scan, build_and_test]
     runs-on: ubuntu-latest
     environment: development
     permissions:
