@@ -1,0 +1,52 @@
+# Git & CI/CD
+.gitignore
+.gitattributes
+.github
+
+# Terraform & Cloud Infrastructure
+terraform/
+*.tfstate*
+
+# Local Python environments & uv cache
+.venv/
+venv/
+env/
+.uv/
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Tests, linting & typing artifacts
+tests/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+coverage/
+.coverage
+htmlcov/
+
+# Local databases & persistent data
+data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Environment variables & local secrets
+.env
+*.env
+.env.*
+
+# Docker & documentation
+Dockerfile*
+.dockerignore
+README.md
+docs/
+
+# IDE & OS metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
