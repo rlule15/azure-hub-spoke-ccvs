@@ -20,22 +20,27 @@ The backend service runs as a hardened, multi-stage Docker container built on Py
 
 ## Automated DevSecOps & Delivery Pipeline
 
-The repository utilizes a security-first GitHub Actions workflow implementing static analysis, vulnerability scanning, and automated image publishing to GitHub Container Registry (GHCR):
+The repository utilizes a modular, multi-stage GitHub Actions workflow enforcing static analysis, container vulnerability scanning, runtime integration testing, and automated image publishing to GitHub Container Registry (GHCR):
 
 ```text
-git push / manual dispatch
+Manual Dispatch (workflow_dispatch)
    │
-   ├── 1. Static Linting (Hadolint)
-   │      └── Enforces Dockerfile best practices and layer hygiene
+   ├── 1. Lint & Scan Dockerfile (Job: lint_and_scan)
+   │      ├── Static Linting (Hadolint) ──► SARIF Code Scanning Ingestion
+   │      │      └── Enforces Dockerfile best practices and layer hygiene
+   │      └── Config Security Scan (Trivy) ──► SARIF Code Scanning Ingestion
+   │             └── Scans Dockerfile for misconfigurations and security risks
    │
-   ├── 2. Configuration Security Scan (Trivy)
-   │      └── Scans build manifests for misconfigurations and privilege risks
+   ├── 2. Build, Scan & Test (Job: build_and_test)
+   │      ├── Syntax & Cache Verification ('docker build --check')
+   │      ├── Local Image Build ('ghcr.io/<repo>:test')
+   │      ├── Image Vulnerability Scan (Trivy) ──► SARIF Code Scanning Ingestion
+   │      │      └── Scans image packages (CRITICAL, HIGH, MEDIUM)
+   │      └── Runtime Health Check
+   │             └── Runs container, validates 'GET :8080/health', and tears down
    │
-   ├── 3. SARIF Ingestion (GitHub Code Scanning)
-   │      └── Uploads Hadolint & Trivy results directly to the repository Security tab
-   │
-   └── 4. Build, Validate & Push (Docker Buildx)
-          ├── Executes 'docker build --check' syntax & cache verification
-          ├── Generates dynamic image tags (version tag + latest)
-          └── Pushes authenticated multi-platform image to GHCR via GITHUB_TOKEN
+   └── 3. Release & Publish (Job: push)
+          ├── Authentication to ghcr.io via GITHUB_TOKEN
+          ├── Metadata & Tag Generation ('${{ vars.IMAGE_VERSION }}' + 'latest')
+          └── Production Build & Push to GitHub Container Registry
 ```
