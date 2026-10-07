@@ -29,7 +29,7 @@ FROM python:3.13-slim AS runtime
 
 # Install git for application use
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    git=2.55.0 \
+    git=2.55.0-1ubuntu1 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory to /app
