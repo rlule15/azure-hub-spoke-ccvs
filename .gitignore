@@ -218,3 +218,22 @@ __marimo__/
 .streamlit/secrets.toml
 
 ccvs.db
+
+# Terraform
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.*
+terraform/crash.log
+terraform/crash.*.log
+terraform/*.tfplan
+terraform/terraform.tfplan
+terraform/override.tf
+terraform/override.tf.json
+terraform/*_override.tf
+terraform/*_override.tf.json
+terraform/.terraformrc
+terraform/terraform.rc
+
+# Terraform variable files (may contain secrets)
+terraform/*.tfvars
+terraform/*.tfvars.json
