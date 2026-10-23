@@ -41,8 +41,8 @@ jobs:
           if [[ -n "$output" ]]; then
             echo "The following terraform files are not formatted correctly:"
             
-            for $files in $output; do
-              echo "- $files"
+            for file in $output; do
+              echo "- $file"
             done
 
             echo "Please run 'terraform fmt' to format them."
