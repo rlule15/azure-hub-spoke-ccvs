@@ -38,10 +38,12 @@ jobs:
         working-directory: terraform
         run: |
           output=$(terraform fmt -check || true)
-          if [[ -n "$output" ]]; then
+          files=$(echo "$output" | grep '\.tf$')
+          if [[ -n "$files" ]]; then
             echo "The following terraform files are not formatted correctly:"
             
-            for file in $output; do
+            for file in $files; do
+              if [[ ]]
               echo "- $file"
             done
 
