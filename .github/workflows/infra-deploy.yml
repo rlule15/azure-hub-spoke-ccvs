@@ -36,19 +36,7 @@ jobs:
 
       - name: Terraform Format Check
         working-directory: terraform
-        run: |
-          output=$(terraform fmt -check || true)
-          files=$(echo "$output" | grep '\.tf$')
-          if [[ -n "$files" ]]; then
-            echo "The following terraform files are not formatted correctly:"
-            
-            for file in $files; do
-              echo "- $file"
-            done
-
-            echo "Please run 'terraform fmt' to format them."
-            exit 1
-          fi
+        run: terraform fmt -check
 
       - name: Terraform Validate
         working-directory: terraform
