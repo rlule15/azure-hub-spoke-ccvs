@@ -43,7 +43,6 @@ jobs:
             echo "The following terraform files are not formatted correctly:"
             
             for file in $files; do
-              if [[ ]]
               echo "- $file"
             done
 
