@@ -26,6 +26,7 @@ jobs:
           client-id: ${{ vars.AZURE_CLIENT_ID }}
           tenant-id: ${{ vars.AZURE_TENANT_ID }}
           subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          allow-no-subscriptions: true # Test to see if this allows the workflow to run without a subscription, but still allow the terraform apply to work with the subscription set in the environment variables.
 
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v4
