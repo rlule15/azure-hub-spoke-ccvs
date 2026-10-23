@@ -1,0 +1,43 @@
+name: Container CD Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  pull_and_deploy:
+    name: Pull Docker Image from GitHub Container Registry and Deploy to Azure VM
+    runs-on: ubuntu-latest
+    environment: development
+    permissions:
+      contents: read
+
+    steps:
+
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: SSH command
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROXY_HOST }}
+          username: ${{ secrets.PROXY_USERNAME }}
+          key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
+          port: ${{ secrets.PROXY_PORT }}
+          script: |
+            mkdir abc/def
+            ls -al
+
+      - name: SSH proxy command
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
+          port: ${{ secrets.PORT }}
+          proxy_host: ${{ secrets.PROXY_HOST }}
+          proxy_username: ${{ secrets.PROXY_USERNAME }}
+          proxy_key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
+          proxy_port: ${{ secrets.PROXY_PORT }}
+          script: |
+            mkdir abc/def
+            ls -al
