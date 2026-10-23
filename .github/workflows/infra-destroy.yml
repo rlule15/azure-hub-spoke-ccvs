@@ -1,0 +1,38 @@
+name: Infrastructure Destory Workflow
+
+# What will trigger this workflow
+on:
+  workflow_dispatch:
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    environment: development
+    permissions:
+      id-token: write # Required for OIDC authentication with Azure
+      contents: read
+    
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v7
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v3
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+
+      - name: Terraform Init
+        working-directory: terraform
+        run: terraform init -input=false
+
+      - name: Terraform Destroy
+        working-directory: terraform
+        run: terraform destroy --auto-approve
+        env:
+          TF_VAR_public_ssh_key: ${{ vars.ACTIONS_PUBLIC_SSH }}
+          TF_VAR_resource_group_name: ${{ vars.RG_NAME }}
