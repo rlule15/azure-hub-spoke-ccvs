@@ -16,7 +16,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v7
 
-      - name: SSH command
+      - name: Download Docker dependencies, image and upload to vm
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.PROXY_HOST }}
@@ -24,8 +24,18 @@ jobs:
           key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
           port: ${{ secrets.PROXY_PORT }}
           script: |
-            mkdir abc/def
-            ls -al
+            mkdir ~/docker-deps && cd docker-deps
+            sudo apt-get update
+            sudo apt-get download containerd.io docker-ce docker-ce-cli docker-buildx-plugin docker-compose-plugin
+
+            docker pull ghcr.io/rlule15/azure-hub-spoke-ccvs:latest
+            docker save ghcr.io/rlule15/azure-hub-spoke-ccvs:latest -o azure-hub-spoke-ccvs.tar
+  
+        
+            scp docker-deps/* ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/docker-deps
+            scp azure-hub-spoke-ccvs.tar ${{ secrets.USERNAME }}@${{ secrets.HOST }}:~/azure-hub-spoke-ccvs.tar
+
+
 
       - name: SSH proxy command
         uses: appleboy/ssh-action@v1
