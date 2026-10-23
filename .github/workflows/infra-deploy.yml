@@ -36,7 +36,11 @@ jobs:
 
       - name: Terraform Format Check
         working-directory: terraform
-        run: terraform fmt -check
+        run: |
+          terraform fmt -check | if [ $? -ne 0 ]; then
+            echo "Terraform files are not formatted correctly. Please run 'terraform fmt' to format them."
+            exit 1
+          fi
 
       - name: Terraform Validate
         working-directory: terraform
