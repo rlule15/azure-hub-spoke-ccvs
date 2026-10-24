@@ -24,7 +24,10 @@ jobs:
           key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
           port: ${{ secrets.PROXY_PORT }}
           script: |
+            # Enable IP forwarding
+            sudo sysctl -w net.ipv4.ip_forward=1
 
+            
             # Allow spoke traffic to be forwarded out through the hub
             sudo iptables -A FORWARD \
               -s ${{ secrets.SPOKE_SUBNET }} -i eth0 -o eth0 \
