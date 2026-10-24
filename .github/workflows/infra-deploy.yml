@@ -49,7 +49,7 @@ jobs:
           TF_VAR_public_ssh_key: ${{ vars.ACTIONS_PUBLIC_SSH }}
           TF_VAR_resource_group_name: ${{ vars.RG_NAME }}
           TF_VAR_terraform_github_pat: ${{ secrets.TERRAFORM_GITHUB_PAT }}
-          TF_VAR_repository_name: ${{ github.repository }}
+          TF_VAR_repository_name: ${{ vars.REPOSITORY_NAME }}
 
       - name: Terraform
         working-directory: terraform
@@ -58,4 +58,4 @@ jobs:
           TF_VAR_public_ssh_key: ${{ vars.ACTIONS_PUBLIC_SSH }}
           TF_VAR_resource_group_name: ${{ vars.RG_NAME }}
           TF_VAR_terraform_github_pat: ${{ secrets.TERRAFORM_GITHUB_PAT }}
-          TF_VAR_repository_name: ${{ github.repository }}
+          TF_VAR_repository_name: ${{ vars.REPOSITORY_NAME }}
