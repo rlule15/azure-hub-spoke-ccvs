@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 5.0"
     }
+    github = {
+      source  = "integrations/github"
+      version = "~> 5.0"
+    }
   }
   backend "azurerm" {
     resource_group_name  = "rg-tfstate-dev-ctus"
@@ -11,6 +15,10 @@ terraform {
     container_name       = "tfstate"
     key                  = "hub_spoke_tf/terrafom.tfstate"
   }
+}
+
+provider "github" {
+  token = var.terraform_github_pat
 }
 
 provider "azurerm" {

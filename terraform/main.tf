@@ -65,7 +65,6 @@ resource "azurerm_virtual_network_peering" "spoke_to_hub" {
 
 }
 
-
 # Create public ip address for hub vm
 resource "azurerm_public_ip" "pip_hub" {
   name                = "pip-${local.env}-${local.region}-hub-01"
@@ -80,7 +79,6 @@ resource "azurerm_network_interface" "hub_vm_nic" {
   location              = data.azurerm_resource_group.main_rg.location
   resource_group_name   = data.azurerm_resource_group.main_rg.name
   ip_forwarding_enabled = true
-
 
 
   ip_configuration {
@@ -98,11 +96,11 @@ resource "azurerm_linux_virtual_machine" "hub_vm" {
   location            = data.azurerm_resource_group.main_rg.location
   size                = "Standard_B2ts_v2"
   admin_username      = "linuxadmin"
+
   admin_ssh_key {
     username   = "linuxadmin"
     public_key = var.public_ssh_key
   }
-
 
   network_interface_ids = [azurerm_network_interface.hub_vm_nic.id]
 
@@ -119,7 +117,29 @@ resource "azurerm_linux_virtual_machine" "hub_vm" {
     sku       = "server"
     version   = "latest"
   }
+
+  # Enable Trusted Launch
+  secure_boot_enabled = true
+  vtpm_enabled        = true
 }
+
+# Set github secret values
+resource "github_actions_environment_secret" "hub_vm_ip_secret" {
+  repository      = var.repository_name
+  environment     = "development"
+  depends_on      = [azurerm_linux_virtual_machine.hub_vm]
+  secret_name     = HUB_VM_PIP
+  value_encrypted = azurerm_linux_virtual_machine.hub_vm.public_ip_address
+}
+
+resource "github_actions_environment_secret" "spoke_vm_username_secret" {
+  repository      = var.repository_name
+  environment     = "development"
+  depends_on      = [azurerm_linux_virtual_machine.hub_vm]
+  secret_name     = SPOKE_VM_USERNAME
+  value_encrypted = azurerm_linux_virtual_machine.hub_vm.admin_username
+}
+
 
 # Create nic for spoke vm
 resource "azurerm_network_interface" "spoke_vm_nic" {
@@ -152,7 +172,6 @@ resource "azurerm_linux_virtual_machine" "spoke_vm" {
 
   network_interface_ids = [azurerm_network_interface.spoke_vm_nic.id]
 
-
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "Premium_LRS"
@@ -166,7 +185,29 @@ resource "azurerm_linux_virtual_machine" "spoke_vm" {
     sku       = "server"
     version   = "latest"
   }
+
+  # Enable Trusted Launch
+  secure_boot_enabled = true
+  vtpm_enabled        = true
 }
+
+# Set github secret values
+resource "github_actions_environment_secret" "spoke_vm_ip_secret" {
+  repository      = var.repository_name
+  environment     = "development"
+  depends_on      = [azurerm_linux_virtual_machine.spoke_vm]
+  secret_name     = SPOKE_VM_IP
+  value_encrypted = azurerm_linux_virtual_machine.spoke_vm.private_ip_address
+}
+
+resource "github_actions_environment_secret" "spoke_vm_username_secret" {
+  repository      = var.repository_name
+  environment     = "development"
+  depends_on      = [azurerm_linux_virtual_machine.spoke_vm]
+  secret_name     = SPOKE_VM_USERNAME
+  value_encrypted = azurerm_linux_virtual_machine.spoke_vm.admin_username
+}
+
 
 # Create route table
 # destination set to internet route through hub vm
