@@ -23,10 +23,13 @@ jobs:
           key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
           port: ${{ secrets.PROXY_PORT }}
           script: |
+            # Enable IP forwarding
+            sudo sysctl -w net.ipv4.ip_forward=1
 
+            
             # Allow spoke traffic to be forwarded out through the hub
             sudo iptables -A FORWARD \
-              -s ${{ secrets.HUB_SUBNET }} -i eth0 -o eth0 \
+              -s ${{ secrets.SPOKE_SUBNET }} -i eth0 -o eth0 \
               -j ACCEPT
 
             # Allow replies to established connections back to the spoke
@@ -37,7 +40,7 @@ jobs:
 
             # Translate spoke source addresses for outbound internet access
             sudo iptables -t nat -A POSTROUTING \
-              -s ${{ secrets.HUB_SUBNET }} -o eth0 \
+              -s ${{ secrets.SPOKE_SUBNET }} -o eth0 \
               -j MASQUERADE
 
   pull_and_deploy:
@@ -83,7 +86,7 @@ jobs:
             sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
             # Log in to GitHub Container Registry
-            echo "${{ secrets.GITHUB_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ghcr.io/rlule15/azure-hub-spoke-ccvs:latest
 
             docker run -d -p 8080:8000 --name ccvs-api ghcr.io/rlule15/azure-hub-spoke-ccvs:latest
