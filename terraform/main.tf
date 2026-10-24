@@ -220,7 +220,7 @@ resource "azurerm_network_security_rule" "hub_allow_traffic_from_spoke" {
   priority                    = 310
   direction                   = "Inbound"
   access                      = "Allow"
-  protocol                    = "Any"
+  protocol                    = "*"
   source_port_range           = "*"
   destination_port_range      = "*"
   source_address_prefix       = "10.1.0.0/16"
