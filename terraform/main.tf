@@ -132,11 +132,11 @@ resource "github_actions_environment_secret" "hub_vm_ip_secret" {
   value_encrypted = azurerm_linux_virtual_machine.hub_vm.public_ip_address
 }
 
-resource "github_actions_environment_secret" "spoke_vm_username_secret" {
+resource "github_actions_environment_secret" "hub_vm_username_secret" {
   repository      = var.repository_name
   environment     = "development"
   depends_on      = [azurerm_linux_virtual_machine.hub_vm]
-  secret_name     = SPOKE_VM_USERNAME
+  secret_name     = HUB_VM_USERNAME
   value_encrypted = azurerm_linux_virtual_machine.hub_vm.admin_username
 }
 
