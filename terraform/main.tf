@@ -207,8 +207,8 @@ resource "azurerm_network_security_rule" "hub_allow_ssh" {
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "22"
   source_address_prefix       = "Internet" # Will change this to use my public ip later on
+  destination_port_range      = "22"
   destination_address_prefix  = azurerm_network_interface.hub_vm_nic.private_ip_address
   resource_group_name         = data.azurerm_resource_group.main_rg.name
   network_security_group_name = azurerm_network_security_group.nsg_hub.name
@@ -222,8 +222,8 @@ resource "azurerm_network_security_rule" "hub_allow_traffic_from_spoke" {
   access                      = "Allow"
   protocol                    = "*"
   source_port_range           = "*"
-  destination_port_range      = "*"
   source_address_prefix       = "10.1.0.0/16"
+  destination_port_range      = "*"
   destination_address_prefix  = "Internet"
   resource_group_name         = data.azurerm_resource_group.main_rg.name
   network_security_group_name = azurerm_network_security_group.nsg_hub.name
@@ -231,6 +231,19 @@ resource "azurerm_network_security_rule" "hub_allow_traffic_from_spoke" {
 }
 
 # Create NSG rule to allow API port to hub
+resource "azurerm_network_security_rule" "hub_allow_port_traffic" {
+  name                        = "AllowInboundOnAPIPort"
+  priority                    = 320
+  direction                   = "Inbound"
+  protocol                    = "Tcp"
+  access                      = "Allow"
+  source_port_range           = "*"
+  source_address_prefix       = "Internet"
+  destination_port_range      = "8080"
+  destination_address_prefix  = azurerm_network_interface.hub_vm_nic.private_ip_address
+  resource_group_name         = data.azurerm_resource_group.main_rg.name
+  network_security_group_name = azurerm_network_security_group.nsg_hub.name
+}
 
 # Associate NSG to hub subnet
 resource "azurerm_subnet_network_security_group_association" "hub_subnet_nsg_association" {
@@ -253,8 +266,8 @@ resource "azurerm_network_security_rule" "spoke_allow_ssh_from_hub" {
   access                      = "Allow"
   protocol                    = "Tcp"
   source_port_range           = "*"
-  destination_port_range      = "22"
   source_address_prefix       = azurerm_network_interface.hub_vm_nic.private_ip_address
+  destination_port_range      = "22"
   destination_address_prefix  = "*"
   resource_group_name         = data.azurerm_resource_group.main_rg.name
   network_security_group_name = azurerm_network_security_group.nsg_spoke.name
@@ -268,14 +281,27 @@ resource "azurerm_network_security_rule" "spoke_allow_icmp_from_hub" {
   access                      = "Allow"
   protocol                    = "Icmp"
   source_port_range           = "*"
-  destination_port_range      = "*"
   source_address_prefix       = azurerm_network_interface.hub_vm_nic.private_ip_address
+  destination_port_range      = "*"
   destination_address_prefix  = "*"
   resource_group_name         = data.azurerm_resource_group.main_rg.name
   network_security_group_name = azurerm_network_security_group.nsg_spoke.name
 }
 
 # Create NSG rule to allow API port from hub
+resource "azurerm_network_security_rule" "spoke_allow_api_from_hub" {
+  name                        = "AllowAPIPortFromHub"
+  priority                    = 320
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+  source_port_range           = "*"
+  source_address_prefix       = azurerm_network_interface.hub_vm_nic.private_ip_address
+  destination_port_range      = "8080"
+  destination_address_prefix  = "*"
+  resource_group_name         = data.azurerm_resource_group.main_rg.name
+  network_security_group_name = azurerm_network_security_group.nsg_spoke.name
+}
 
 # Associate NSG to spoke subnet
 resource "azurerm_subnet_network_security_group_association" "spoke_subnet_nsg_association" {
