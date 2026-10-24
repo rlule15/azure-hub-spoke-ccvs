@@ -4,15 +4,14 @@ on:
   workflow_dispatch:
 
 jobs:
-  pull_and_deploy:
-    name: Pull Docker Image from GitHub Container Registry and Deploy to Azure VM
+  setup_nat_rules:
+    name: Setup NAT Rules on Proxy Server
     runs-on: ubuntu-latest
     environment: development
     permissions:
       contents: read
 
     steps:
-
       - name: Checkout repo
         uses: actions/checkout@v7
 
@@ -41,8 +40,15 @@ jobs:
               -s ${{ secrets.HUB_SUBNET }} -o eth0 \
               -j MASQUERADE
 
+  pull_and_deploy:
+    name: Pull Docker Image from GitHub Container Registry and Deploy to Azure VM
+    needs: setup_nat_rules
+    runs-on: ubuntu-latest
+    environment: development
+    permissions:
+      contents: read
 
-
+    steps:
       - name: SSH into host, install Docker, pull image and run container.
         uses: appleboy/ssh-action@v1
         with:
