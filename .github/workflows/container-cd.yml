@@ -86,7 +86,7 @@ jobs:
             sudo apt install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
             # Log in to GitHub Container Registry
-            echo "${{ secrets.GHCR_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            echo "${{ secrets.GHCR_PULL_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
             docker pull ghcr.io/rlule15/azure-hub-spoke-ccvs:latest
 
             docker run -d -p 8080:8000 --name ccvs-api ghcr.io/rlule15/azure-hub-spoke-ccvs:latest
