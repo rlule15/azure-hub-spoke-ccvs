@@ -43,19 +43,15 @@ jobs:
               -s ${{ secrets.SPOKE_SUBNET }} -o eth0 \
               -j MASQUERADE
 
-            # Forward incoming API requests to the spoke
+            # Allow incoming traffic on port 8080 to be forwarded to the spoke
             sudo iptables -A FORWARD \
-              -i eth0 -o eth0 \
-              -p tcp -d ${{ secrets.HOST }} --dport 8080 \
-              -m conntrack --ctstate NEW,ESTABLISHED,RELATED \
-              -j ACCEPT
+            -i eth0 -o eth0 -p tcp -d ${{ secrets.HOST }} --dport 8080 \
+            -j ACCEPT
 
-            # Allow API response traffic back through the hub
-            sudo iptables -A FORWARD \
-              -i eth0 -o eth0 \
-              -p tcp -s ${{ secrets.HOST }} --sport 8080 \
-              -m conntrack --ctstate ESTABLISHED,RELATED \
-              -j ACCEPT
+            # Forward incoming API requests to the spoke
+            sudo iptables -t nat -A PREROUTING \
+            -i eth0 -p tcp --dport 8080 \
+            -j DNAT --to-destination ${{ secrets.HOST}}:8080
 
             # Translate incoming client traffic so the spoke replies through the hub
             sudo iptables -t nat -A POSTROUTING \
