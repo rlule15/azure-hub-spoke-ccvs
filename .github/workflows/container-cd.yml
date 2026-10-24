@@ -18,7 +18,7 @@ jobs:
       - name: SSH into proxy server and setup NAT rules.
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.HBU_VM_PIP }}
+          host: ${{ secrets.HUB_VM_PIP }}
           username: ${{ secrets.HUB_VM_USERNAME }}
           key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
           port: ${{ secrets.PROXY_PORT }}
