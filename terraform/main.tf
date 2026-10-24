@@ -230,6 +230,8 @@ resource "azurerm_network_security_rule" "hub_allow_traffic_from_spoke" {
 
 }
 
+# Create NSG rule to allow API port to hub
+
 # Associate NSG to hub subnet
 resource "azurerm_subnet_network_security_group_association" "hub_subnet_nsg_association" {
   subnet_id                 = azurerm_subnet.hub_snet_01.id
@@ -272,6 +274,8 @@ resource "azurerm_network_security_rule" "spoke_allow_icmp_from_hub" {
   resource_group_name         = data.azurerm_resource_group.main_rg.name
   network_security_group_name = azurerm_network_security_group.nsg_spoke.name
 }
+
+# Create NSG rule to allow API port from hub
 
 # Associate NSG to spoke subnet
 resource "azurerm_subnet_network_security_group_association" "spoke_subnet_nsg_association" {
