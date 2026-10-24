@@ -88,6 +88,6 @@ jobs:
 
             # Log in to GitHub Container Registry
             echo "${{ secrets.GHCR_PULL_TOKEN }}" | sudo docker login ghcr.io -u ${{ github.actor }} --password-stdin
-            sudo docker pull ghcr.io/${{ github.actor }}/${{ github.repository }}:latest
+            sudo docker pull ghcr.io/${{ github.repository }}:latest
 
-            sudo docker run -d -p 8080:8000 --name ccvs-api ghcr.io/${{ github.actor }}/${{ github.repository }}:latest
+            sudo docker run -d -p 8080:8000 --name ccvs-api ghcr.io/${{ github.repository }}:latest
