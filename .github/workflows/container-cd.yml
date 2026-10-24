@@ -18,8 +18,8 @@ jobs:
       - name: SSH into proxy server and setup NAT rules.
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.PROXY_HOST }}
-          username: ${{ secrets.PROXY_USERNAME }}
+          host: ${{ secrets.HBU_VM_PIP }}
+          username: ${{ secrets.HUB_VM_USERNAME }}
           key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
           port: ${{ secrets.PROXY_PORT }}
           script: |
@@ -45,17 +45,17 @@ jobs:
 
             # Allow incoming traffic on port 8080 to be forwarded to the spoke
             sudo iptables -A FORWARD \
-            -i eth0 -o eth0 -p tcp -d ${{ secrets.HOST }} --dport 8080 \
+            -i eth0 -o eth0 -p tcp -d ${{ secrets.SPOKE_VM_IP }} --dport 8080 \
             -j ACCEPT
 
             # Forward incoming API requests to the spoke
             sudo iptables -t nat -A PREROUTING \
             -i eth0 -p tcp --dport 8080 \
-            -j DNAT --to-destination ${{ secrets.HOST}}:8080
+            -j DNAT --to-destination ${{ secrets.SPOKE_VM_IP }}:8080
 
             # Translate incoming client traffic so the spoke replies through the hub
             sudo iptables -t nat -A POSTROUTING \
-              -o eth0 -p tcp -d ${{ secrets.HOST }} --dport 8080 \
+              -o eth0 -p tcp -d ${{ secrets.SPOKE_VM_IP }} --dport 8080 \
               -j SNAT --to-source ${{ secrets.HUB_SUBNET }}
 
   pull_and_deploy:
@@ -70,12 +70,12 @@ jobs:
       - name: SSH into host, install Docker, pull image and run container.
         uses: appleboy/ssh-action@v1
         with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          host: ${{ secrets.SPOKE_VM_IP }}
+          username: ${{ secrets.SPOKE_VM_USERNAME }}
           key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
           port: ${{ secrets.PORT }}
-          proxy_host: ${{ secrets.PROXY_HOST }}
-          proxy_username: ${{ secrets.PROXY_USERNAME }}
+          proxy_host: ${{ secrets.HUB_VM_PIP }}
+          proxy_username: ${{ secrets.HUB_VM_USERNAME }}
           proxy_key: ${{ secrets.ACTIONS_PRIVATE_SSH }}
           proxy_port: ${{ secrets.PROXY_PORT }}
           script: |
