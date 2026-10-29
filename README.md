@@ -91,4 +91,3 @@ The network security documentation describes the Network Security Group (NSG) ru
 * **Containers:** Docker, multi-stage builds
 * **CI/CD:** GitHub Actions, OIDC federation, GitHub Container Registry
 * **Container security:** Hadolint, Trivy, GitHub Code Scanning
-* **Backend:** Python (Azure Functions)
